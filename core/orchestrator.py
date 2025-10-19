@@ -6,7 +6,7 @@ from datetime import datetime
 from .extractor import PDFExtractor
 from .llm_clients import LLMClients
 from .analytics import AnalyticsEngine
-from .simple_report_builder import SimpleReportBuilder
+from core.modern_report_builder import ModernReportBuilder
 
 class PDFOrchestrator:
     """Orchestrates the entire PDF analysis workflow"""
@@ -15,7 +15,7 @@ class PDFOrchestrator:
         self.extractor = PDFExtractor()
         self.llm_clients = LLMClients()
         self.analytics = AnalyticsEngine()
-        self.report_builder = SimpleReportBuilder()
+        self.report_builder = ModernReportBuilder()
         self.process_log = []
     
     def process_pdf(self, pdf_path: str, output_path: str) -> Dict[str, Any]:
@@ -58,7 +58,7 @@ class PDFOrchestrator:
         print(f"\n   Analysis complete. Models used: {model_usage}")
         
         # Generate analytics
-        analytics_data = self.analytics.compute_analytics(analysis_results)
+        analytics_data = self.analytics.compute_advanced_analytics(analysis_results)
         
         # Prepare final output
         output_data = {

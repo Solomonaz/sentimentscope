@@ -186,3 +186,70 @@ class AnalyticsEngine:
             "keyword_analysis": {},
             "chart_data": {}
         }
+
+    def compute_advanced_analytics(self, analysis_results: List[Dict]) -> Dict[str, Any]:
+        """Compute advanced analytics for modern reporting"""
+        basic_analytics = self.compute_analytics(analysis_results)
+        
+        # Add advanced metrics
+        advanced_metrics = {
+            "sentiment_trend": self._compute_sentiment_trend(analysis_results),
+            "confidence_quality": self._assess_confidence_quality(analysis_results),
+            "emotional_complexity": self._compute_emotional_complexity(analysis_results),
+            "persuasion_strength": self._compute_persuasion_strength(analysis_results)
+        }
+        
+        return {**basic_analytics, **advanced_metrics}
+
+    def _compute_sentiment_trend(self, analysis_results: List[Dict]) -> List[float]:
+        """Compute sentiment trend across sections"""
+        if not analysis_results:
+            return []
+        
+        sentiment_scores = []
+        for result in analysis_results:
+            emotion = result['emotion']
+            score = self._emotion_to_score(emotion)
+            sentiment_scores.append(score)
+        
+        return sentiment_scores
+
+    def _emotion_to_score(self, emotion: str) -> float:
+        """Convert emotion to numerical score"""
+        scores = {
+            'Angry': -1.0, 'Sad': -0.7, 'Fearful': -0.3,
+            'Neutral': 0.0, 'Cautious': 0.1, 'Optimistic': 0.7, 'Excited': 1.0
+        }
+        return scores.get(emotion, 0.0)
+
+    def _assess_confidence_quality(self, analysis_results: List[Dict]) -> str:
+        """Assess overall confidence quality"""
+        confidences = [r.get('confidence', 0.5) for r in analysis_results]
+        avg_confidence = np.mean(confidences) if confidences else 0.5
+        
+        if avg_confidence >= 0.8:
+            return "Excellent"
+        elif avg_confidence >= 0.7:
+            return "Good"
+        elif avg_confidence >= 0.6:
+            return "Moderate"
+        else:
+            return "Needs Review"
+
+    def _compute_emotional_complexity(self, analysis_results: List[Dict]) -> float:
+        """Compute emotional complexity (diversity of emotions)"""
+        if not analysis_results:
+            return 0.0
+        
+        emotion_count = len(set([r['emotion'] for r in analysis_results]))
+        max_possible = len(self.emotion_categories)
+        
+        return emotion_count / max_possible
+
+    def _compute_persuasion_strength(self, analysis_results: List[Dict]) -> float:
+        """Compute overall persuasion strength"""
+        if not analysis_results:
+            return 0.0
+        
+        persuasive_count = sum(1 for r in analysis_results if r['intent'] == 'Persuasive')
+        return persuasive_count / len(analysis_results)
