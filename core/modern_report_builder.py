@@ -1,5 +1,5 @@
 from reportlab.lib.pagesizes import A4
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.lib import colors
@@ -11,21 +11,27 @@ import os
 import tempfile
 from datetime import datetime
 from typing import Dict, Any, List
+from collections import Counter
 import matplotlib
 matplotlib.use('Agg')  # Use non-interactive backend
 
 class ModernReportBuilder:
-    """Modern PDF report generator with advanced analytics and insights"""
+    """Modern PDF report generator with real plots, graphs and charts"""
     
     def __init__(self):
         self.styles = getSampleStyleSheet()
         self.setup_modern_styles()
         self.chart_temp_files = []
+        
+        # Set modern plotting style
+        plt.style.use('seaborn-v0_8')
+        self.colors = ['#2E86AB', '#A23B72', '#F18F01', '#2E8B57', 
+                      '#FF6B6B', '#6A0572', '#FFD166', '#118AB2']
     
     def setup_modern_styles(self):
         """Setup modern paragraph styles"""
         # Modern color palette
-        self.colors = {
+        self.report_colors = {
             'primary': '#2E86AB',
             'secondary': '#A23B72', 
             'accent': '#F18F01',
@@ -42,27 +48,27 @@ class ModernReportBuilder:
             'ModernTitle': {
                 'parent': self.styles['Heading1'],
                 'fontSize': 24,
-                'textColor': colors.HexColor(self.colors['primary']),
+                'textColor': colors.HexColor('#2E86AB'),
                 'spaceAfter': 30,
                 'alignment': 1
             },
             'ModernHeading1': {
                 'parent': self.styles['Heading1'],
                 'fontSize': 18,
-                'textColor': colors.HexColor(self.colors['dark']),
+                'textColor': colors.HexColor('#2C3E50'),
                 'spaceAfter': 20,
                 'leftIndent': 10
             },
             'ModernHeading2': {
                 'parent': self.styles['Heading2'],
                 'fontSize': 14,
-                'textColor': colors.HexColor(self.colors['secondary']),
+                'textColor': colors.HexColor('#A23B72'),
                 'spaceAfter': 12
             },
             'InsightBox': {
                 'parent': self.styles['Normal'],
-                'backColor': colors.HexColor(self.colors['light']),
-                'borderColor': colors.HexColor(self.colors['primary']),
+                'backColor': colors.HexColor('#ECF0F1'),
+                'borderColor': colors.HexColor('#2E86AB'),
                 'borderWidth': 1,
                 'borderPadding': 10,
                 'leftIndent': 10,
@@ -71,7 +77,7 @@ class ModernReportBuilder:
             'Recommendation': {
                 'parent': self.styles['Normal'],
                 'backColor': colors.HexColor('#E8F5E8'),
-                'borderColor': colors.HexColor(self.colors['success']),
+                'borderColor': colors.HexColor('#2E8B57'),
                 'borderWidth': 1,
                 'borderPadding': 8,
                 'leftIndent': 8
@@ -83,8 +89,8 @@ class ModernReportBuilder:
                 self.styles.add(ParagraphStyle(name=style_name, **style_config))
     
     def generate_report(self, analysis_data: Dict[str, Any], output_path: str):
-        """Generate modern PDF report with analytics and insights"""
-        print(f"Generating modern PDF report: {output_path}")
+        """Generate modern PDF report with real plots and charts"""
+        print(f"Generating modern PDF report with plots: {output_path}")
         
         try:
             doc = SimpleDocTemplate(output_path, pagesize=A4, topMargin=0.5*inch)
@@ -92,28 +98,30 @@ class ModernReportBuilder:
             
             # Cover page
             story.extend(self._create_modern_cover(analysis_data))
-            story.append(Spacer(1, 0.5*inch))
+            story.append(self._page_break())
             
             # Executive Summary with Insights
             story.extend(self._create_executive_summary(analysis_data))
-            story.append(Spacer(1, 0.3*inch))
+            story.append(self._page_break())
             
-            # Advanced Analytics
+            # Advanced Analytics with REAL plots
             story.extend(self._create_advanced_analytics(analysis_data))
-            story.append(Spacer(1, 0.3*inch))
+            story.append(self._page_break())
             
             # Actionable Insights & Recommendations
             story.extend(self._create_actionable_insights(analysis_data))
-            story.append(Spacer(1, 0.3*inch))
+            story.append(self._page_break())
             
             # Detailed Analysis
             story.extend(self._create_detailed_analysis(analysis_data))
             
             doc.build(story)
-            print(f"PDF report generated successfully: {output_path}")
+            print(f"Modern PDF report with plots generated successfully: {output_path}")
             
         except Exception as e:
-            print(f"Error generating PDF report: {e}")
+            print(f"Error generating modern PDF report: {e}")
+            import traceback
+            traceback.print_exc()
             # Fallback to simple report
             self._generate_fallback_report(analysis_data, output_path)
         finally:
@@ -121,7 +129,7 @@ class ModernReportBuilder:
             self._cleanup_temp_files()
     
     def _create_modern_cover(self, data: Dict[str, Any]) -> List[Any]:
-        """Create modern cover page"""
+        """Create modern cover page with sentiment gauge"""
         elements = []
         
         # Title with modern styling
@@ -129,7 +137,7 @@ class ModernReportBuilder:
         elements.append(title)
         elements.append(Spacer(1, 0.3*inch))
         
-        # File info in a modern layout
+        # File info
         processed_date = datetime.fromisoformat(data['processed_at'].replace('Z', '+00:00'))
         file_info = f"""
         <b>Document:</b> {data['file_name']}<br/>
@@ -139,10 +147,17 @@ class ModernReportBuilder:
         elements.append(Paragraph(file_info, self.styles['ModernHeading2']))
         elements.append(Spacer(1, 0.4*inch))
         
-        # Dominant metrics in a styled table
+        # Create sentiment gauge chart
+        sentiment_gauge = self._create_sentiment_gauge(data)
+        if sentiment_gauge:
+            elements.append(Paragraph("Overall Sentiment Score", self.styles['ModernHeading2']))
+            elements.append(Image(sentiment_gauge, width=5*inch, height=3*inch))
+            elements.append(Spacer(1, 0.2*inch))
+        
+        # Key metrics table
         stats = data['document_stats']
         metrics_data = [
-            ["KEY METRICS", "VALUE", "INSIGHT"],
+            ["KEY METRICS", "VALUE", "INTERPRETATION"],
             ["Dominant Emotion", stats['dominant_emotion'], self._get_emotion_insight(stats['dominant_emotion'])],
             ["Average Confidence", f"{stats['average_confidence']:.1%}", "High Reliability" if stats['average_confidence'] > 0.7 else "Moderate Reliability"],
             ["Analysis Model", list(stats.get('model_usage', {}).keys())[0] if stats.get('model_usage') else "AI-Powered", "Advanced AI Analysis"]
@@ -150,7 +165,7 @@ class ModernReportBuilder:
         
         metrics_table = Table(metrics_data, colWidths=[2*inch, 1.5*inch, 2.5*inch])
         metrics_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor(self.colors['primary'])),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2E86AB')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
             ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
@@ -161,18 +176,10 @@ class ModernReportBuilder:
         ]))
         
         elements.append(metrics_table)
-        elements.append(Spacer(1, 0.3*inch))
-        
-        # Quick sentiment overview chart
-        sentiment_chart = self._create_sentiment_gauge(data['document_stats']['average_confidence'])
-        if sentiment_chart:
-            elements.append(Paragraph("Analysis Confidence", self.styles['ModernHeading2']))
-            elements.append(sentiment_chart)
-        
         return elements
     
     def _create_executive_summary(self, data: Dict[str, Any]) -> List[Any]:
-        """Create modern executive summary with insights"""
+        """Create executive summary with emotion distribution chart"""
         elements = []
         
         elements.append(Paragraph("Executive Summary & Key Insights", self.styles['ModernHeading1']))
@@ -184,57 +191,60 @@ class ModernReportBuilder:
         # Overall assessment
         overall_text = f"""
         This comprehensive sentiment analysis reveals a document with <b>{insights['overall_tone']}</b> tone. 
-        The analysis achieved <b>{data['document_stats']['average_confidence']:.1%} average confidence</b> across all sections, 
+        The analysis achieved <b>{data['document_stats']['average_confidence']:.1%} average confidence</b> across {data['document_stats']['total_sections']} sections, 
         indicating {'high reliability' if data['document_stats']['average_confidence'] > 0.7 else 'moderate reliability'} in the findings.
         """
         elements.append(Paragraph(overall_text, self.styles['Normal']))
         elements.append(Spacer(1, 0.2*inch))
         
-        # Key insights in boxes
+        # Emotion distribution pie chart
+        emotion_chart = self._create_emotion_pie_chart(data['analytics']['emotion_distribution'])
+        if emotion_chart:
+            elements.append(Paragraph("Emotion Distribution", self.styles['ModernHeading2']))
+            elements.append(Image(emotion_chart, width=6*inch, height=4*inch))
+            elements.append(Spacer(1, 0.2*inch))
+        
+        # Key insights
         elements.append(Paragraph("Key Emotional Insights", self.styles['ModernHeading2']))
         for insight in insights['key_insights'][:3]:
             insight_text = f"• {insight}"
             elements.append(Paragraph(insight_text, self.styles['InsightBox']))
             elements.append(Spacer(1, 0.1*inch))
         
-        elements.append(Spacer(1, 0.2*inch))
-        
-        # Emotion distribution chart
-        emotion_chart = self._create_emotion_distribution_chart(data['analytics']['emotion_distribution'])
-        if emotion_chart:
-            elements.append(Paragraph("Emotion Distribution", self.styles['ModernHeading2']))
-            elements.append(emotion_chart)
-            elements.append(Spacer(1, 0.2*inch))
-        
         return elements
     
     def _create_advanced_analytics(self, data: Dict[str, Any]) -> List[Any]:
-        """Create advanced analytics section with multiple charts"""
+        """Create advanced analytics section with multiple real plots"""
         elements = []
         
         elements.append(Paragraph("Advanced Analytics Dashboard", self.styles['ModernHeading1']))
         elements.append(Spacer(1, 0.2*inch))
         
-        # Emotion distribution
-        emotion_chart = self._create_emotion_barchart(data['analytics']['emotion_distribution'])
-        if emotion_chart:
-            elements.append(Paragraph("Emotion Analysis", self.styles['ModernHeading2']))
-            elements.append(emotion_chart)
+        # Create analytics dashboard with multiple charts
+        dashboard_chart = self._create_analytics_dashboard(data)
+        if dashboard_chart:
+            elements.append(Image(dashboard_chart, width=6*inch, height=6*inch))
             elements.append(Spacer(1, 0.2*inch))
         
-        # Intent distribution
-        intent_chart = self._create_intent_chart(data['analytics']['intent_distribution'])
+        # Intent analysis bar chart
+        intent_chart = self._create_intent_bar_chart(data['analytics']['intent_distribution'])
         if intent_chart:
-            elements.append(Paragraph("Intent Analysis", self.styles['ModernHeading2']))
-            elements.append(intent_chart)
+            elements.append(Paragraph("Communication Intent Analysis", self.styles['ModernHeading2']))
+            elements.append(Image(intent_chart, width=6*inch, height=4*inch))
             elements.append(Spacer(1, 0.2*inch))
         
-        # Confidence analysis
-        confidence_data = [result.get('confidence', 0.5) for result in data['analysis']]
-        confidence_chart = self._create_confidence_chart(confidence_data)
+        # Confidence distribution
+        confidence_chart = self._create_confidence_histogram(data)
         if confidence_chart:
-            elements.append(Paragraph("Confidence Distribution", self.styles['ModernHeading2']))
-            elements.append(confidence_chart)
+            elements.append(Paragraph("Confidence Distribution Analysis", self.styles['ModernHeading2']))
+            elements.append(Image(confidence_chart, width=6*inch, height=4*inch))
+            elements.append(Spacer(1, 0.2*inch))
+        
+        # Emotion timeline
+        timeline_chart = self._create_emotion_timeline(data)
+        if timeline_chart:
+            elements.append(Paragraph("Emotion Timeline Across Document", self.styles['ModernHeading2']))
+            elements.append(Image(timeline_chart, width=6*inch, height=4*inch))
         
         return elements
     
@@ -249,7 +259,7 @@ class ModernReportBuilder:
         
         # Strategic recommendations
         elements.append(Paragraph("Strategic Recommendations", self.styles['ModernHeading2']))
-        for i, recommendation in enumerate(insights['recommendations'][:5], 1):
+        for i, recommendation in enumerate(insights['recommendations'][:6], 1):
             rec_text = f"<b>Recommendation {i}:</b> {recommendation}"
             elements.append(Paragraph(rec_text, self.styles['Recommendation']))
             elements.append(Spacer(1, 0.1*inch))
@@ -257,12 +267,20 @@ class ModernReportBuilder:
         elements.append(Spacer(1, 0.2*inch))
         
         # Risk assessment
-        elements.append(Paragraph("Risk Assessment", self.styles['ModernHeading2']))
+        elements.append(Paragraph("Risk Assessment & Considerations", self.styles['ModernHeading2']))
         risk_factors = self._assess_risks(data)
         for risk in risk_factors:
             risk_text = f"• {risk}"
             elements.append(Paragraph(risk_text, self.styles['Normal']))
             elements.append(Spacer(1, 0.05*inch))
+        
+        elements.append(Spacer(1, 0.2*inch))
+        
+        # Decision support matrix
+        decision_chart = self._create_decision_matrix(data)
+        if decision_chart:
+            elements.append(Paragraph("Decision Support Matrix", self.styles['ModernHeading2']))
+            elements.append(Image(decision_chart, width=6*inch, height=4*inch))
         
         return elements
     
@@ -270,25 +288,25 @@ class ModernReportBuilder:
         """Create detailed analysis section"""
         elements = []
         
-        elements.append(Paragraph("Detailed Analysis", self.styles['ModernHeading1']))
+        elements.append(Paragraph("Detailed Section Analysis", self.styles['ModernHeading1']))
         elements.append(Spacer(1, 0.2*inch))
         
         # Create a modern table with analysis results
-        detailed_data = [["Page", "Emotion", "Intent", "Confidence", "Key Phrases"]]
+        detailed_data = [["Page", "Emotion", "Intent", "Confidence", "Text Preview"]]
         
-        for result in data['analysis'][:10]:  # Show first 10 for readability
+        for result in data['analysis'][:8]:  # Show first 8 for readability
             emotion_icon = self._get_emotion_icon(result['emotion'])
             detailed_data.append([
                 str(result['page']),
                 f"{emotion_icon} {result['emotion']}",
                 result['intent'],
                 f"{result.get('confidence', 0):.0%}",
-                result.get('text_snippet', '')[:40] + "..."
+                result.get('text_snippet', '')[:35] + "..."
             ])
         
         detailed_table = Table(detailed_data, colWidths=[0.5*inch, 1.2*inch, 1.2*inch, 1*inch, 2*inch])
         detailed_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor(self.colors['dark'])),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2C3E50')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
             ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
@@ -299,172 +317,344 @@ class ModernReportBuilder:
         
         elements.append(detailed_table)
         
-        if len(data['analysis']) > 10:
+        if len(data['analysis']) > 8:
             elements.append(Spacer(1, 0.1*inch))
-            elements.append(Paragraph(f"... and {len(data['analysis']) - 10} more sections analyzed", self.styles['Normal']))
+            elements.append(Paragraph(f"... and {len(data['analysis']) - 8} more sections analyzed", self.styles['Normal']))
         
         return elements
     
-    def _create_sentiment_gauge(self, confidence: float) -> Any:
-        """Create a simple sentiment gauge using table"""
+    def _create_sentiment_gauge(self, data: Dict[str, Any]) -> str:
+        """Create sentiment gauge chart"""
         try:
-            # Create a visual gauge using a table
-            gauge_data = [["ANALYSIS CONFIDENCE"]]
+            fig, ax = plt.subplots(figsize=(8, 4), subplot_kw=dict(projection='polar'))
             
-            # Add gauge bars
-            gauge_level = int(confidence * 10)
-            gauge_bar = "█" * gauge_level + "░" * (10 - gauge_level)
-            gauge_data.append([gauge_bar])
-            gauge_data.append([f"{confidence:.1%}"])
+            # Calculate overall sentiment score
+            emotion_dist = data['analytics']['emotion_distribution']
+            sentiment_weights = {
+                'Optimistic': 1.0, 'Excited': 0.8, 'Neutral': 0.5,
+                'Cautious': 0.3, 'Fearful': -0.2, 'Sad': -0.5, 'Angry': -0.8
+            }
             
-            gauge_table = Table(gauge_data, colWidths=[4*inch])
-            gauge_table.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor(self.colors['primary'])),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('FONTSIZE', (0, 1), (-1, 1), 12),
-                ('FONTSIZE', (0, 2), (-1, 2), 14),
-                ('FONTNAME', (0, 2), (-1, 2), 'Helvetica-Bold'),
-            ]))
+            total_score = sum(emotion_dist.get(emotion, 0) * weight 
+                            for emotion, weight in sentiment_weights.items())
+            normalized_score = (total_score + 1) / 2  # Normalize to 0-1
             
-            return gauge_table
+            # Create gauge
+            theta = np.linspace(0, np.pi, 100)
+            radii = np.ones(100) * 0.8
+            
+            # Color segments
+            colors_gauge = ['#FF6B6B', '#FFD166', '#2E8B57', '#2E8B57']
+            theta_segments = np.linspace(0, np.pi, 5)
+            
+            for i in range(4):
+                theta_start = theta_segments[i]
+                theta_end = theta_segments[i+1]
+                theta_range = np.linspace(theta_start, theta_end, 25)
+                ax.fill_between(theta_range, 0, 0.8, color=colors_gauge[i], alpha=0.6)
+            
+            # Needle
+            needle_angle = normalized_score * np.pi
+            ax.arrow(needle_angle, 0, 0, 0.7, head_width=0.1, head_length=0.1, 
+                    fc='#2C3E50', ec='#2C3E50', linewidth=3)
+            
+            # Labels
+            ax.set_xticks([0, np.pi/4, np.pi/2, 3*np.pi/4, np.pi])
+            ax.set_xticklabels(['Very Negative', 'Negative', 'Neutral', 'Positive', 'Very Positive'])
+            ax.set_ylim(0, 1)
+            ax.set_yticks([])
+            ax.grid(True, alpha=0.3)
+            
+            # Title and score
+            ax.set_title(f'Overall Sentiment Score: {normalized_score:.2f}', pad=20, fontsize=14, fontweight='bold')
+            
+            plt.tight_layout()
+            chart_path = self._save_chart(fig, "sentiment_gauge")
+            return chart_path
             
         except Exception as e:
-            print(f"Gauge creation failed: {e}")
+            print(f"Sentiment gauge failed: {e}")
             return None
     
-    def _create_emotion_distribution_chart(self, emotion_dist: Dict[str, float]) -> Any:
-        """Create emotion distribution as a table chart"""
+    def _create_emotion_pie_chart(self, emotion_dist: Dict[str, float]) -> str:
+        """Create emotion distribution pie chart"""
         try:
             if not emotion_dist:
                 return None
             
-            # Create a styled table for emotion distribution
-            emotion_data = [["EMOTION", "PERCENTAGE", "LEVEL"]]
+            fig, ax = plt.subplots(figsize=(10, 6))
             
-            for emotion, percentage in emotion_dist.items():
-                level = "High" if percentage > 0.3 else "Medium" if percentage > 0.1 else "Low"
-                emotion_data.append([
-                    emotion,
-                    f"{percentage:.1%}",
-                    level
-                ])
+            emotions = list(emotion_dist.keys())
+            values = [emotion_dist[e] for e in emotions]
+            colors = self.colors[:len(emotions)]
             
-            emotion_table = Table(emotion_data, colWidths=[1.5*inch, 1*inch, 1*inch])
-            emotion_table.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor(self.colors['secondary'])),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#F8F9FA')),
-                ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#DEE2E6')),
-            ]))
+            # Create pie chart with modern styling
+            wedges, texts, autotexts = ax.pie(values, labels=emotions, colors=colors, autopct='%1.1f%%',
+                                            startangle=90, shadow=True, explode=[0.05] * len(emotions))
             
-            return emotion_table
+            # Style the text
+            for autotext in autotexts:
+                autotext.set_color('white')
+                autotext.set_fontweight('bold')
+                autotext.set_fontsize(10)
+            
+            for text in texts:
+                text.set_fontsize(11)
+                text.set_fontweight('bold')
+            
+            ax.set_title('Emotion Distribution Analysis', fontsize=16, fontweight='bold', pad=20)
+            ax.axis('equal')  # Equal aspect ratio ensures pie is circular
+            
+            plt.tight_layout()
+            chart_path = self._save_chart(fig, "emotion_pie")
+            return chart_path
             
         except Exception as e:
-            print(f"Emotion distribution table failed: {e}")
+            print(f"Emotion pie chart failed: {e}")
             return None
     
-    def _create_emotion_barchart(self, emotion_dist: Dict[str, float]) -> Any:
-        """Create a visual bar chart using table"""
+    def _create_analytics_dashboard(self, data: Dict[str, Any]) -> str:
+        """Create comprehensive analytics dashboard"""
         try:
-            if not emotion_dist:
-                return None
+            fig = plt.figure(figsize=(12, 10))
             
-            # Create a visual bar chart using characters
-            chart_data = [["EMOTION", "DISTRIBUTION"]]
+            # Create 2x2 grid
+            gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
             
-            for emotion, percentage in emotion_dist.items():
-                bar_length = int(percentage * 20)  # Scale to 20 characters max
-                bar = "█" * bar_length
-                chart_data.append([
-                    emotion,
-                    f"{bar} {percentage:.1%}"
-                ])
+            # 1. Emotion bar chart
+            ax1 = fig.add_subplot(gs[0, 0])
+            emotion_dist = data['analytics']['emotion_distribution']
+            emotions = list(emotion_dist.keys())
+            values = [emotion_dist[e] for e in emotions]
             
-            chart_table = Table(chart_data, colWidths=[1.5*inch, 3*inch])
-            chart_table.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor(self.colors['primary'])),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#F8F9FA')),
-                ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#DEE2E6')),
-            ]))
+            bars = ax1.bar(emotions, values, color=self.colors[:len(emotions)], alpha=0.8)
+            ax1.set_title('Emotion Distribution', fontweight='bold')
+            ax1.set_ylabel('Percentage')
+            ax1.tick_params(axis='x', rotation=45)
             
-            return chart_table
+            # Add value labels on bars
+            for bar, value in zip(bars, values):
+                height = bar.get_height()
+                ax1.text(bar.get_x() + bar.get_width()/2., height + 0.01,
+                        f'{value:.1%}', ha='center', va='bottom', fontweight='bold')
+            
+            # 2. Intent bar chart
+            ax2 = fig.add_subplot(gs[0, 1])
+            intent_dist = data['analytics']['intent_distribution']
+            intents = list(intent_dist.keys())
+            intent_values = [intent_dist[i] for i in intents]
+            
+            bars2 = ax2.bar(intents, intent_values, color=['#2E86AB', '#A23B72', '#F18F01'], alpha=0.8)
+            ax2.set_title('Intent Distribution', fontweight='bold')
+            ax2.set_ylabel('Percentage')
+            
+            for bar, value in zip(bars2, intent_values):
+                height = bar.get_height()
+                ax2.text(bar.get_x() + bar.get_width()/2., height + 0.01,
+                        f'{value:.1%}', ha='center', va='bottom', fontweight='bold')
+            
+            # 3. Confidence histogram
+            ax3 = fig.add_subplot(gs[1, 0])
+            confidences = [r.get('confidence', 0.5) for r in data['analysis']]
+            ax3.hist(confidences, bins=10, color='#2E8B57', alpha=0.7, edgecolor='black')
+            ax3.set_title('Confidence Distribution', fontweight='bold')
+            ax3.set_xlabel('Confidence Score')
+            ax3.set_ylabel('Frequency')
+            ax3.axvline(np.mean(confidences), color='red', linestyle='--', label=f'Mean: {np.mean(confidences):.2f}')
+            ax3.legend()
+            
+            # 4. Page-wise sentiment
+            ax4 = fig.add_subplot(gs[1, 1])
+            pages = [r['page'] for r in data['analysis']]
+            sentiment_scores = [self._emotion_to_number(r['emotion']) for r in data['analysis']]
+            
+            ax4.scatter(pages, sentiment_scores, alpha=0.6, color='#FF6B6B', s=50)
+            
+            # Add trend line
+            if len(pages) > 1:
+                z = np.polyfit(pages, sentiment_scores, 1)
+                p = np.poly1d(z)
+                ax4.plot(pages, p(pages), "r--", alpha=0.8, linewidth=2)
+            
+            ax4.set_title('Sentiment Trend by Page', fontweight='bold')
+            ax4.set_xlabel('Page Number')
+            ax4.set_ylabel('Sentiment Score')
+            ax4.grid(True, alpha=0.3)
+            
+            plt.suptitle('Comprehensive Sentiment Analysis Dashboard', fontsize=16, fontweight='bold', y=0.95)
+            plt.tight_layout()
+            
+            chart_path = self._save_chart(fig, "analytics_dashboard")
+            return chart_path
             
         except Exception as e:
-            print(f"Emotion barchart failed: {e}")
+            print(f"Analytics dashboard failed: {e}")
             return None
     
-    def _create_intent_chart(self, intent_dist: Dict[str, float]) -> Any:
-        """Create intent distribution chart"""
+    def _create_intent_bar_chart(self, intent_dist: Dict[str, float]) -> str:
+        """Create intent analysis bar chart"""
         try:
-            if not intent_dist:
-                return None
+            fig, ax = plt.subplots(figsize=(10, 6))
             
-            intent_data = [["INTENT", "PERCENTAGE", "IMPACT"]]
+            intents = list(intent_dist.keys())
+            values = [intent_dist[i] for i in intents]
+            colors = ['#2E86AB', '#A23B72', '#F18F01']
             
-            for intent, percentage in intent_dist.items():
-                impact = "High" if intent == "Persuasive" else "Medium" if intent == "Informative" else "Low"
-                intent_data.append([
-                    intent,
-                    f"{percentage:.1%}",
-                    impact
-                ])
+            bars = ax.bar(intents, values, color=colors, alpha=0.8, edgecolor='black', linewidth=1)
             
-            intent_table = Table(intent_data, colWidths=[1.5*inch, 1*inch, 1*inch])
-            intent_table.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor(self.colors['accent'])),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#F8F9FA')),
-                ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#DEE2E6')),
-            ]))
+            # Add value labels and styling
+            for bar, value in zip(bars, values):
+                height = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width()/2., height + 0.01,
+                       f'{value:.1%}', ha='center', va='bottom', fontweight='bold', fontsize=12)
             
-            return intent_table
+            ax.set_ylabel('Percentage', fontweight='bold')
+            ax.set_title('Communication Intent Analysis', fontsize=14, fontweight='bold', pad=20)
+            ax.grid(True, alpha=0.3, axis='y')
+            
+            plt.tight_layout()
+            chart_path = self._save_chart(fig, "intent_analysis")
+            return chart_path
             
         except Exception as e:
-            print(f"Intent chart failed: {e}")
+            print(f"Intent bar chart failed: {e}")
             return None
     
-    def _create_confidence_chart(self, confidences: List[float]) -> Any:
-        """Create confidence distribution chart"""
+    def _create_confidence_histogram(self, data: Dict[str, Any]) -> str:
+        """Create confidence distribution histogram"""
         try:
-            if not confidences:
-                return None
+            fig, ax = plt.subplots(figsize=(10, 6))
             
-            # Calculate confidence statistics
-            avg_confidence = np.mean(confidences)
-            min_confidence = np.min(confidences)
-            max_confidence = np.max(confidences)
+            confidences = [r.get('confidence', 0.5) for r in data['analysis']]
             
-            confidence_data = [
-                ["STATISTIC", "VALUE"],
-                ["Average Confidence", f"{avg_confidence:.1%}"],
-                ["Minimum Confidence", f"{min_confidence:.1%}"],
-                ["Maximum Confidence", f"{max_confidence:.1%}"],
-                ["Reliability", "High" if avg_confidence > 0.7 else "Medium" if avg_confidence > 0.5 else "Low"]
-            ]
+            # Create histogram with KDE
+            n, bins, patches = ax.hist(confidences, bins=12, color='#2E8B57', alpha=0.7, 
+                                     edgecolor='black', density=True)
             
-            confidence_table = Table(confidence_data, colWidths=[2*inch, 2*inch])
-            confidence_table.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor(self.colors['success'])),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#F8F9FA')),
-                ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#DEE2E6')),
-            ]))
+            # Add KDE line
+            from scipy.stats import gaussian_kde
+            kde = gaussian_kde(confidences)
+            x_range = np.linspace(0, 1, 100)
+            ax.plot(x_range, kde(x_range), color='#2C3E50', linewidth=2, label='Density')
             
-            return confidence_table
+            # Add statistics
+            mean_conf = np.mean(confidences)
+            std_conf = np.std(confidences)
+            
+            ax.axvline(mean_conf, color='red', linestyle='--', linewidth=2, 
+                      label=f'Mean: {mean_conf:.2f}')
+            ax.axvline(mean_conf + std_conf, color='orange', linestyle=':', alpha=0.7)
+            ax.axvline(mean_conf - std_conf, color='orange', linestyle=':', alpha=0.7)
+            
+            ax.set_xlabel('Confidence Score', fontweight='bold')
+            ax.set_ylabel('Density', fontweight='bold')
+            ax.set_title('Confidence Distribution Analysis', fontsize=14, fontweight='bold', pad=20)
+            ax.legend()
+            ax.grid(True, alpha=0.3)
+            
+            # Add text box with statistics
+            stats_text = f'Statistics:\nMean: {mean_conf:.3f}\nStd: {std_conf:.3f}\nN: {len(confidences)}'
+            ax.text(0.02, 0.98, stats_text, transform=ax.transAxes, verticalalignment='top',
+                   bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8),
+                   fontfamily='monospace')
+            
+            plt.tight_layout()
+            chart_path = self._save_chart(fig, "confidence_histogram")
+            return chart_path
             
         except Exception as e:
-            print(f"Confidence chart failed: {e}")
+            print(f"Confidence histogram failed: {e}")
+            return None
+    
+    def _create_emotion_timeline(self, data: Dict[str, Any]) -> str:
+        """Create emotion timeline across pages"""
+        try:
+            fig, ax = plt.subplots(figsize=(12, 6))
+            
+            # Group by page and calculate average sentiment
+            page_sentiments = {}
+            for result in data['analysis']:
+                page = result['page']
+                if page not in page_sentiments:
+                    page_sentiments[page] = []
+                page_sentiments[page].append(self._emotion_to_number(result['emotion']))
+            
+            pages = sorted(page_sentiments.keys())
+            avg_sentiments = [np.mean(page_sentiments[page]) for page in pages]
+            
+            # Create line plot with confidence interval
+            ax.plot(pages, avg_sentiments, marker='o', linewidth=3, markersize=8, 
+                   color='#2E86AB', label='Average Sentiment')
+            
+            # Add confidence interval
+            std_sentiments = [np.std(page_sentiments[page]) for page in pages]
+            ax.fill_between(pages, 
+                          [avg - std for avg, std in zip(avg_sentiments, std_sentiments)],
+                          [avg + std for avg, std in zip(avg_sentiments, std_sentiments)],
+                          alpha=0.2, color='#2E86AB', label='±1 Std Dev')
+            
+            ax.set_xlabel('Page Number', fontweight='bold')
+            ax.set_ylabel('Sentiment Score', fontweight='bold')
+            ax.set_title('Emotion Timeline Across Document Pages', fontsize=14, fontweight='bold', pad=20)
+            ax.legend()
+            ax.grid(True, alpha=0.3)
+            
+            # Add horizontal line at y=0
+            ax.axhline(y=0, color='black', linestyle='-', alpha=0.3)
+            
+            plt.tight_layout()
+            chart_path = self._save_chart(fig, "emotion_timeline")
+            return chart_path
+            
+        except Exception as e:
+            print(f"Emotion timeline failed: {e}")
+            return None
+    
+    def _create_decision_matrix(self, data: Dict[str, Any]) -> str:
+        """Create decision support matrix"""
+        try:
+            fig, ax = plt.subplots(figsize=(10, 6))
+            
+            # Extract key metrics for decision matrix
+            emotion_dist = data['analytics']['emotion_distribution']
+            intent_dist = data['analytics']['intent_distribution']
+            avg_confidence = data['document_stats']['average_confidence']
+            
+            # Calculate scores for decision matrix
+            positivity_score = emotion_dist.get('Optimistic', 0) + emotion_dist.get('Excited', 0)
+            caution_score = emotion_dist.get('Fearful', 0) + emotion_dist.get('Cautious', 0)
+            persuasion_score = intent_dist.get('Persuasive', 0)
+            clarity_score = avg_confidence
+            
+            metrics = ['Positivity', 'Caution', 'Persuasion', 'Clarity']
+            scores = [positivity_score, caution_score, persuasion_score, clarity_score]
+            colors = ['#2E8B57', '#FFA500', '#A23B72', '#2E86AB']
+            
+            # Create radar chart
+            angles = np.linspace(0, 2*np.pi, len(metrics), endpoint=False).tolist()
+            scores += scores[:1]  # Complete the circle
+            angles += angles[:1]  # Complete the circle
+            
+            ax = fig.add_subplot(111, polar=True)
+            ax.plot(angles, scores, 'o-', linewidth=2, markersize=8, color='#2E86AB')
+            ax.fill(angles, scores, alpha=0.25, color='#2E86AB')
+            
+            ax.set_xticks(angles[:-1])
+            ax.set_xticklabels(metrics, fontsize=12, fontweight='bold')
+            ax.set_ylim(0, 1)
+            ax.set_yticks([0.2, 0.4, 0.6, 0.8, 1.0])
+            ax.set_yticklabels(['0.2', '0.4', '0.6', '0.8', '1.0'], fontsize=10)
+            ax.grid(True)
+            
+            ax.set_title('Decision Support Matrix\nDocument Communication Profile', 
+                        fontsize=14, fontweight='bold', pad=20)
+            
+            plt.tight_layout()
+            chart_path = self._save_chart(fig, "decision_matrix")
+            return chart_path
+            
+        except Exception as e:
+            print(f"Decision matrix failed: {e}")
             return None
     
     def _generate_ai_insights(self, data: Dict[str, Any]) -> Dict[str, Any]:
@@ -482,58 +672,59 @@ class ModernReportBuilder:
         
         # Generate key insights
         if emotion_dist.get('Optimistic', 0) > 0.4:
-            insights['key_insights'].append("Document shows strong positive sentiment with optimistic outlook")
+            insights['key_insights'].append("Strong positive sentiment detected - excellent for stakeholder engagement")
         if emotion_dist.get('Fearful', 0) > 0.3:
-            insights['key_insights'].append("Significant cautious or fearful tones detected - consider risk mitigation")
+            insights['key_insights'].append("Significant cautious tones - consider proactive risk communication")
         if emotion_dist.get('Angry', 0) > 0.2:
-            insights['key_insights'].append("Presence of negative emotional tones that may require attention")
+            insights['key_insights'].append("Negative emotional tones present - may require immediate attention")
         
         if intent_dist.get('Persuasive', 0) > 0.5:
-            insights['key_insights'].append("Document has strong persuasive intent - effective communication strategy")
+            insights['key_insights'].append("Highly persuasive document - effective call-to-action strategy")
         elif intent_dist.get('Informative', 0) > 0.6:
-            insights['key_insights'].append("Primarily informative content with factual focus")
+            insights['key_insights'].append("Primarily informative - strong factual foundation")
         
-        # Generate recommendations based on analysis
-        if dominant_emotion in ['Optimistic', 'Excited']:
-            insights['recommendations'].extend([
-                "Leverage positive tone for stakeholder communications",
-                "Consider expanding on successful strategies mentioned", 
-                "Use optimistic language in follow-up communications",
-                "Capitalize on positive momentum for future initiatives"
-            ])
-        elif dominant_emotion in ['Fearful', 'Cautious']:
-            insights['recommendations'].extend([
-                "Address concerns and uncertainties proactively",
-                "Develop risk mitigation strategies for mentioned challenges",
-                "Provide reassurance in stakeholder communications",
+        # Generate recommendations
+        recommendations = {
+            'Optimistic': [
+                "Capitalize on positive momentum in stakeholder communications",
+                "Highlight successful strategies and achievements",
+                "Use optimistic tone in follow-up messaging",
+                "Consider expanding on positive themes in future content"
+            ],
+            'Fearful': [
+                "Address uncertainties with clear, factual information",
+                "Develop comprehensive risk mitigation strategies",
+                "Provide reassurance through transparent communication",
                 "Consider additional data to support decision-making"
-            ])
-        elif dominant_emotion in ['Angry', 'Sad']:
-            insights['recommendations'].extend([
-                "Address negative feedback or concerns immediately",
-                "Consider tone adjustment for future communications", 
-                "Implement feedback mechanisms for improvement",
-                "Develop action plan to address underlying issues"
-            ])
+            ],
+            'Angry': [
+                "Immediately address underlying concerns or issues",
+                "Review and adjust communication tone if necessary",
+                "Implement structured feedback collection",
+                "Develop action plan for issue resolution"
+            ],
+            'Neutral': [
+                "Maintain factual and balanced communication approach",
+                "Consider adding emotional appeal for better engagement",
+                "Ensure clarity and precision in messaging",
+                "Monitor audience reception for tone appropriateness"
+            ]
+        }
         
-        # Confidence-based recommendations
+        # Add emotion-specific recommendations
+        insights['recommendations'].extend(recommendations.get(dominant_emotion, [
+            "Maintain current communication strategy",
+            "Continue monitoring emotional tone consistency",
+            "Consider audience-specific tone adjustments"
+        ]))
+        
+        # Add confidence-based recommendations
         if avg_confidence < 0.6:
-            insights['recommendations'].append("Consider manual review for low-confidence sections")
+            insights['recommendations'].append("Review low-confidence sections for clarity improvement")
         
-        # Intent-based recommendations
+        # Add intent-based recommendations
         if intent_dist.get('Persuasive', 0) > 0.4:
-            insights['recommendations'].append("Strengthen persuasive elements with supporting data and evidence")
-        
-        # Ensure we have at least some insights
-        if not insights['key_insights']:
-            insights['key_insights'].append("Document shows balanced emotional tone across different sections")
-        
-        if not insights['recommendations']:
-            insights['recommendations'].extend([
-                "Maintain current communication strategy",
-                "Continue monitoring emotional tone in future documents",
-                "Consider periodic sentiment analysis for consistency"
-            ])
+            insights['recommendations'].append("Strengthen persuasive elements with data-driven evidence")
         
         return insights
     
@@ -544,13 +735,13 @@ class ModernReportBuilder:
         avg_confidence = data['document_stats']['average_confidence']
         
         if emotion_dist.get('Fearful', 0) > 0.3:
-            risks.append("High level of uncertainty or concern in content that may affect stakeholder confidence")
+            risks.append("High uncertainty may affect stakeholder confidence and decision-making")
         if emotion_dist.get('Angry', 0) > 0.2:
-            risks.append("Negative emotional tones detected that could impact document reception and effectiveness")
+            risks.append("Negative tones could impact document reception and effectiveness")
         if avg_confidence < 0.6:
-            risks.append("Lower confidence scores may indicate ambiguous content requiring clarification")
+            risks.append("Ambiguous content in low-confidence sections may require clarification")
         if emotion_dist.get('Neutral', 0) > 0.7:
-            risks.append("Highly neutral tone may lack emotional engagement for target audience")
+            risks.append("Highly neutral tone may reduce emotional engagement and memorability")
         
         if not risks:
             risks.append("No significant risks identified - document maintains appropriate tone and clarity")
@@ -565,24 +756,32 @@ class ModernReportBuilder:
         if positive_score > negative_score + 0.2:
             return "predominantly positive and forward-looking"
         elif negative_score > positive_score + 0.2:
-            return "predominantly cautious with concerns"
+            return "predominantly cautious with notable concerns"
         elif emotion_dist.get('Neutral', 0) > 0.6:
-            return "balanced and factual"
+            return "balanced, factual and professionally neutral"
         else:
-            return "mixed with varied emotional tones"
+            return "mixed with varied emotional tones reflecting complexity"
+    
+    def _emotion_to_number(self, emotion: str) -> float:
+        """Convert emotion to numerical score"""
+        emotion_scores = {
+            'Angry': -1.0, 'Sad': -0.7, 'Fearful': -0.3,
+            'Neutral': 0.0, 'Cautious': 0.1, 'Optimistic': 0.7, 'Excited': 1.0
+        }
+        return emotion_scores.get(emotion, 0.0)
     
     def _get_emotion_insight(self, emotion: str) -> str:
         """Get insight for specific emotion"""
         insights = {
-            'Optimistic': "Positive outlook, good for engagement and motivation",
-            'Fearful': "Cautious tone, indicates areas needing attention or reassurance", 
-            'Angry': "Strong negative sentiment, requires immediate addressing",
-            'Sad': "Somber tone, may need supportive communication",
-            'Neutral': "Balanced and factual, appropriate for formal communication",
-            'Excited': "Enthusiastic tone, high energy and positive momentum",
-            'Cautious': "Careful and measured approach, risk-aware positioning"
+            'Optimistic': "Positive and forward-looking - excellent for engagement",
+            'Fearful': "Cautious tone - indicates areas needing attention", 
+            'Angry': "Strong negative sentiment - requires immediate addressing",
+            'Sad': "Somber tone - may need supportive communication",
+            'Neutral': "Balanced and factual - professional communication",
+            'Excited': "Enthusiastic - high energy and positive momentum", 
+            'Cautious': "Careful approach - risk-aware and measured"
         }
-        return insights.get(emotion, "Standard emotional tone for business communication")
+        return insights.get(emotion, "Appropriate emotional tone for context")
     
     def _get_emotion_icon(self, emotion: str) -> str:
         """Get emotion icon (using text representation)"""
@@ -591,6 +790,23 @@ class ModernReportBuilder:
             'Sad': "↓", 'Neutral': "•", 'Excited': "★", 'Cautious': "ⓘ"
         }
         return icons.get(emotion, "•")
+    
+    def _save_chart(self, fig, name: str) -> str:
+        """Save matplotlib chart as image and return file path"""
+        try:
+            chart_path = f"temp_{name}.png"
+            fig.savefig(chart_path, dpi=300, bbox_inches='tight', facecolor='white')
+            plt.close(fig)  # Close the figure to free memory
+            self.chart_temp_files.append(chart_path)
+            return chart_path
+        except Exception as e:
+            print(f"Failed to save chart {name}: {e}")
+            plt.close(fig)
+            return None
+    
+    def _page_break(self) -> Spacer:
+        """Create a page break"""
+        return Spacer(1, 0.1*inch)
     
     def _generate_fallback_report(self, data: Dict[str, Any], output_path: str):
         """Generate a fallback simple report if modern one fails"""
