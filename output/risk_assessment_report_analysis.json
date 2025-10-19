@@ -1,0 +1,323 @@
+{
+  "file_name": "risk_assessment_report.pdf",
+  "processed_at": "2025-10-20T01:47:37.257136",
+  "document_stats": {
+    "total_pages": 3,
+    "total_sections": 9,
+    "dominant_emotion": "Fearful",
+    "average_confidence": 0.9499999999999998,
+    "model_usage": {
+      "gemini": 9
+    },
+    "processing_time_seconds": 34.090208292007446,
+    "memory_usage_mb": 179.4375
+  },
+  "analysis": [
+    {
+      "page": 1,
+      "block_id": 1,
+      "text": "CRITICAL RISK ASSESSMENT REPORT\nHigh-Priority Threats Requiring Immediate Attention\nURGENT: This report identifies several critical risks that require immediate executive attention and\ndecisive action. Failure to address these issues could result in significant financial losses,\nreputational damage, and regulatory penalties.",
+      "text_snippet": "CRITICAL RISK ASSESSMENT REPORT\nHigh-Priority Threats Requiring Immediate Attention\nURGENT: This report identifies several critical risks that require immediate executive attention and\ndecisive action...",
+      "emotion": "Fearful",
+      "intent": "Persuasive",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 2,
+      "block_id": 2,
+      "text": "1. Critical Cybersecurity Vulnerabilities\nRisk Level: HIGH - We have identified severe vulnerabilities in our network infrastructure that could\nlead to catastrophic data breaches. Our penetration testing revealed that external attackers could\npotentially access sensitive customer data and intellectual property. Potential Impact: $75+ million\nin direct costs, irreversible reputational damage, regulatory fines up to $25 million, and potential\nclass-action lawsuits. Recommended Action: Immediate security audit, patch deployment, and\nenhanced monitoring. We must allocate $5 million for security upgrades in the next quarter.",
+      "text_snippet": "1. Critical Cybersecurity Vulnerabilities\nRisk Level: HIGH - We have identified severe vulnerabilities in our network infrastructure that could\nlead to catastrophic data breaches. Our penetration test...",
+      "emotion": "Fearful",
+      "intent": "Persuasive",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 2,
+      "block_id": 3,
+      "text": "2. Financial Compliance Risks\nRisk Level: HIGH - Recent regulatory changes have created significant compliance gaps in our\nfinancial reporting processes. We are currently not in full compliance with new international\naccounting standards. Potential Impact: Regulatory penalties up to $15 million, stock price\ndecline, loss of investor confidence, and potential delisting from major exchanges. Recommended\nAction: Immediate engagement of external auditors, process overhaul, and staff training.",
+      "text_snippet": "2. Financial Compliance Risks\nRisk Level: HIGH - Recent regulatory changes have created significant compliance gaps in our\nfinancial reporting processes. We are currently not in full compliance with n...",
+      "emotion": "Fearful",
+      "intent": "Persuasive",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 2,
+      "block_id": 4,
+      "text": "Compliance must be achieved within 90 days.",
+      "text_snippet": "Compliance must be achieved within 90 days.",
+      "emotion": "Neutral",
+      "intent": "Informative",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 3,
+      "block_id": 5,
+      "text": "3. Supply Chain Disruption Risks\nRisk Level: MEDIUM-HIGH - Geopolitical tensions and supplier concentration create substantial\nrisks to our production capabilities. A single supplier represents 45% of our critical components.",
+      "text_snippet": "3. Supply Chain Disruption Risks\nRisk Level: MEDIUM-HIGH - Geopolitical tensions and supplier concentration create substantial\nrisks to our production capabilities. A single supplier represents 45% of...",
+      "emotion": "Fearful",
+      "intent": "Informative",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 3,
+      "block_id": 6,
+      "text": "Potential Impact: Production delays up to 60 days, revenue loss of $40+ million, customer contract\npenalties, and market share erosion. Recommended Action: Diversify supplier base, increase\ninventory buffers, and develop alternative sourcing strategies within 6 months.",
+      "text_snippet": "Potential Impact: Production delays up to 60 days, revenue loss of $40+ million, customer contract\npenalties, and market share erosion. Recommended Action: Diversify supplier base, increase\ninventory ...",
+      "emotion": "Fearful",
+      "intent": "Persuasive",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 3,
+      "block_id": 7,
+      "text": "4. Critical Talent Retention Risks\nRisk Level: MEDIUM - We are experiencing alarming turnover rates among key technical staff.",
+      "text_snippet": "4. Critical Talent Retention Risks\nRisk Level: MEDIUM - We are experiencing alarming turnover rates among key technical staff.",
+      "emotion": "Fearful",
+      "intent": "Persuasive",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 3,
+      "block_id": 8,
+      "text": "Competitors are actively poaching our top performers with aggressive compensation packages.",
+      "text_snippet": "Competitors are actively poaching our top performers with aggressive compensation packages.",
+      "emotion": "Cautious",
+      "intent": "Informative",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 3,
+      "block_id": 9,
+      "text": "Potential Impact: Loss of institutional knowledge, project delays, increased recruitment costs, and\npotential intellectual property leakage. Recommended Action: Review compensation structure,\nenhance retention programs, and accelerate knowledge transfer initiatives immediately.",
+      "text_snippet": "Potential Impact: Loss of institutional knowledge, project delays, increased recruitment costs, and\npotential intellectual property leakage. Recommended Action: Review compensation structure,\nenhance ...",
+      "emotion": "Cautious",
+      "intent": "Persuasive",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    }
+  ],
+  "analytics": {
+    "emotion_distribution": {
+      "Fearful": 0.6666666666666666,
+      "Neutral": 0.1111111111111111,
+      "Cautious": 0.2222222222222222
+    },
+    "intent_distribution": {
+      "Persuasive": 0.6666666666666666,
+      "Informative": 0.3333333333333333
+    },
+    "average_confidence": 0.9499999999999998,
+    "dominant_emotion": "Fearful",
+    "confidence_stats": {
+      "mean": 0.9499999999999998,
+      "std": 1.1102230246251565e-16,
+      "min": 0.95,
+      "max": 0.95
+    },
+    "page_analysis": {
+      "1": {
+        "dominant_emotion": "Fearful",
+        "dominant_intent": "Persuasive",
+        "emotion_distribution": {
+          "Fearful": 1
+        },
+        "intent_distribution": {
+          "Persuasive": 1
+        },
+        "average_confidence": 0.95
+      },
+      "2": {
+        "dominant_emotion": "Fearful",
+        "dominant_intent": "Persuasive",
+        "emotion_distribution": {
+          "Fearful": 2,
+          "Neutral": 1
+        },
+        "intent_distribution": {
+          "Persuasive": 2,
+          "Informative": 1
+        },
+        "average_confidence": 0.9499999999999998
+      },
+      "3": {
+        "dominant_emotion": "Fearful",
+        "dominant_intent": "Persuasive",
+        "emotion_distribution": {
+          "Fearful": 3,
+          "Cautious": 2
+        },
+        "intent_distribution": {
+          "Informative": 2,
+          "Persuasive": 3
+        },
+        "average_confidence": 0.95
+      }
+    },
+    "timeline_data": {
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "emotions": [
+        "Fearful",
+        "Fearful",
+        "Fearful",
+        "Neutral",
+        "Fearful",
+        "Fearful",
+        "Fearful",
+        "Cautious",
+        "Cautious"
+      ],
+      "intents": [
+        "Persuasive",
+        "Persuasive",
+        "Persuasive",
+        "Informative",
+        "Informative",
+        "Persuasive",
+        "Persuasive",
+        "Informative",
+        "Persuasive"
+      ],
+      "confidences": [
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95
+      ]
+    },
+    "keyword_analysis": {
+      "Optimistic": [],
+      "Fearful": [
+        "risk",
+        "risks",
+        "critical",
+        "level:",
+        "report"
+      ],
+      "Angry": [],
+      "Sad": [],
+      "Neutral": [
+        "compliance",
+        "must",
+        "achieved",
+        "within",
+        "days."
+      ],
+      "Excited": [],
+      "Cautious": [
+        "compensation",
+        "potential",
+        "competitors",
+        "actively",
+        "poaching"
+      ]
+    },
+    "chart_data": {
+      "emotion_distribution": {
+        "labels": [
+          "Fearful",
+          "Neutral",
+          "Cautious"
+        ],
+        "values": [
+          6,
+          1,
+          2
+        ]
+      },
+      "intent_distribution": {
+        "labels": [
+          "Persuasive",
+          "Informative"
+        ],
+        "values": [
+          6,
+          3
+        ]
+      },
+      "timeline": {
+        "blocks": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "emotions": [
+          "Fearful",
+          "Fearful",
+          "Fearful",
+          "Neutral",
+          "Fearful",
+          "Fearful",
+          "Fearful",
+          "Cautious",
+          "Cautious"
+        ],
+        "intents": [
+          "Persuasive",
+          "Persuasive",
+          "Persuasive",
+          "Informative",
+          "Informative",
+          "Persuasive",
+          "Persuasive",
+          "Informative",
+          "Persuasive"
+        ],
+        "confidences": [
+          0.95,
+          0.95,
+          0.95,
+          0.95,
+          0.95,
+          0.95,
+          0.95,
+          0.95,
+          0.95
+        ]
+      },
+      "confidence_heatmap": {
+        "1": 0.95,
+        "2": 0.9499999999999998,
+        "3": 0.95
+      }
+    }
+  },
+  "process_log": [],
+  "processing_mode": "standard",
+  "validation_info": {
+    "sampling_applied": true,
+    "resource_limits": {
+      "max_pages": 50,
+      "max_memory_mb": 512,
+      "max_processing_minutes": 10
+    }
+  }
+}

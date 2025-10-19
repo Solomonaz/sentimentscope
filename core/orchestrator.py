@@ -8,6 +8,8 @@ from .extractor import PDFExtractor
 from .llm_clients import LLMClients
 from .analytics import AnalyticsEngine
 from .modern_report_builder import ModernReportBuilder
+from .smart_sampler import SmartSampler
+from .streaming_processor import StreamingProcessor
 import psutil
 import time
 
@@ -54,6 +56,9 @@ class ProductionConfig:
     
     # System limits
     MIN_FREE_DISK_SPACE_MB = 100
+    
+    # Streaming threshold - use streaming for documents larger than this
+    STREAMING_THRESHOLD_PAGES = 100
     
     @classmethod
     def validate_document(cls, file_path: str) -> Dict[str, Any]:
@@ -134,6 +139,15 @@ class PDFOrchestrator:
         self.report_builder = ModernReportBuilder()
         self.config = ProductionConfig()
         self.resource_monitor = ResourceMonitor()
+        
+        # Initialize the new components
+        self.smart_sampler = SmartSampler(max_samples=self.config.MAX_PARAGRAPHS)
+        self.streaming_processor = StreamingProcessor(
+            llm_clients=self.llm_clients,
+            analytics_engine=self.analytics,
+            max_memory_mb=100
+        )
+        
         self.process_log = []
         
     def pre_validate(self, pdf_path: str) -> Dict[str, Any]:
@@ -154,6 +168,15 @@ class PDFOrchestrator:
         
         print(f"   ✅ Validation passed: {validation['page_count']} pages, {validation['file_size_mb']:.1f}MB")
         
+        # Step 1.5: Choose processing strategy based on document size
+        if validation['page_count'] > self.config.STREAMING_THRESHOLD_PAGES:
+            print(f"   🔄 Document large ({validation['page_count']} pages), using streaming processor")
+            return self._process_with_streaming(pdf_path, output_path, validation)
+        else:
+            return self._process_with_standard(pdf_path, output_path, validation)
+    
+    def _process_with_standard(self, pdf_path: str, output_path: str, validation: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Standard processing for smaller documents"""
         try:
             # Step 2: Extract text with monitoring
             paragraphs = self._extract_text_safely(pdf_path)
@@ -162,10 +185,13 @@ class PDFOrchestrator:
             
             print(f"   📄 Extracted {len(paragraphs)} paragraphs")
             
-            # Step 3: Apply sampling if document is large
+            # Step 3: Apply smart sampling if document is large
             if len(paragraphs) > self.config.MAX_PARAGRAPHS:
-                paragraphs = self._apply_smart_sampling(paragraphs)
-                print(f"   📊 Applied sampling: analyzing {len(paragraphs)} representative paragraphs")
+                original_count = len(paragraphs)
+                paragraphs = self.smart_sampler.sample_paragraphs(paragraphs)
+                sampling_report = self.smart_sampler.get_sampling_report(original_count, len(paragraphs))
+                print(f"   📊 Applied sampling: {sampling_report['reduction_percentage']:.1f}% reduction")
+                self._log_event('sampling_applied', f"Reduced from {original_count} to {len(paragraphs)} paragraphs")
             
             # Step 4: Analyze paragraphs with resource monitoring
             analysis_results, model_usage = self._analyze_paragraphs_safely(paragraphs)
@@ -177,13 +203,13 @@ class PDFOrchestrator:
             
             # Step 6: Prepare final output
             output_data = self._prepare_output_data(
-                pdf_path, analysis_results, analytics_data, model_usage
+                pdf_path, analysis_results, analytics_data, model_usage, "standard"
             )
             
             # Step 7: Save outputs with error handling
             self._save_outputs_safely(output_data, pdf_path, output_path)
             
-            print(f"   ✅ Processing completed successfully")
+            print(f"   ✅ Standard processing completed successfully")
             return output_data
             
         except MemoryError as e:
@@ -197,10 +223,55 @@ class PDFOrchestrator:
             self._log_event('timeout_error', error_msg)
             raise
         except Exception as e:
-            error_msg = f"Processing failed: {str(e)}"
+            error_msg = f"Standard processing failed: {str(e)}"
             print(f"   ❌ {error_msg}")
             self._log_event('processing_error', error_msg)
             raise
+    
+    def _process_with_streaming(self, pdf_path: str, output_path: str, validation: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Streaming processing for very large documents"""
+        try:
+            print(f"   🌊 Starting streaming processing for {validation['page_count']} page document")
+            
+            # Use streaming processor for large documents
+            max_pages = min(validation['page_count'], 500)  # Limit even for streaming
+            result = self.streaming_processor.process_large_pdf_streaming(
+                pdf_path, output_path, max_pages=max_pages
+            )
+            
+            # Generate PDF report from streaming results
+            self.streaming_processor.generate_report_from_streaming(result, output_path)
+            
+            # Convert to standard output format for consistency
+            output_data = self._convert_streaming_to_standard_format(result)
+            
+            print(f"   ✅ Streaming processing completed successfully")
+            return output_data
+            
+        except Exception as e:
+            error_msg = f"Streaming processing failed: {str(e)}"
+            print(f"   ❌ {error_msg}")
+            self._log_event('streaming_processing_error', error_msg)
+            raise
+    
+    def _convert_streaming_to_standard_format(self, streaming_result: Dict[str, Any]) -> Dict[str, Any]:
+        """Convert streaming result to standard output format"""
+        return {
+            "file_name": streaming_result["file_name"],
+            "processed_at": streaming_result["processed_at"],
+            "document_stats": streaming_result["document_stats"],
+            "analytics": streaming_result["analytics"],
+            "analysis": [],  # Empty array - detailed data is in JSONL file
+            "process_log": [
+                {
+                    "timestamp": streaming_result["processed_at"],
+                    "event": "streaming_processing_complete",
+                    "detail": f"Processed via streaming: {streaming_result['document_stats']['total_pages']} pages, {streaming_result['document_stats']['total_paragraphs']} paragraphs"
+                }
+            ],
+            "processing_mode": "streaming",
+            "output_files": streaming_result.get("output_files", {})
+        }
     
     def _extract_text_safely(self, pdf_path: str) -> List[Dict]:
         """Extract text with resource monitoring"""
@@ -212,47 +283,6 @@ class PDFOrchestrator:
             return paragraphs
         except Exception as e:
             raise Exception(f"Text extraction failed: {str(e)}")
-    
-    def _apply_smart_sampling(self, paragraphs: List[Dict]) -> List[Dict]:
-        """Apply intelligent sampling to large documents"""
-        total_paragraphs = len(paragraphs)
-        max_paragraphs = self.config.MAX_PARAGRAPHS
-        
-        if total_paragraphs <= max_paragraphs:
-            return paragraphs
-        
-        print(f"   📉 Document large ({total_paragraphs} paragraphs), sampling to {max_paragraphs}")
-        
-        # Strategy: Take from beginning, middle, and end
-        sampled = []
-        
-        # Take from beginning (20%)
-        beginning_count = max(1, int(max_paragraphs * 0.2))
-        sampled.extend(paragraphs[:beginning_count])
-        
-        # Take from middle (60%)
-        middle_count = max(1, int(max_paragraphs * 0.6))
-        middle_start = len(paragraphs) // 2 - middle_count // 2
-        middle_end = middle_start + middle_count
-        sampled.extend(paragraphs[middle_start:middle_end])
-        
-        # Take from end (20%)
-        end_count = max_paragraphs - len(sampled)
-        if end_count > 0:
-            sampled.extend(paragraphs[-end_count:])
-        
-        # Remove duplicates and ensure we have exactly max_paragraphs
-        unique_sampled = []
-        seen_texts = set()
-        
-        for para in sampled:
-            text_hash = hash(para['text'][:100])  # Hash first 100 chars to identify similar paragraphs
-            if text_hash not in seen_texts and len(unique_sampled) < max_paragraphs:
-                unique_sampled.append(para)
-                seen_texts.add(text_hash)
-        
-        print(f"   🔍 Sampling complete: {len(unique_sampled)} unique paragraphs selected")
-        return unique_sampled
     
     def _analyze_paragraphs_safely(self, paragraphs: List[Dict]) -> tuple:
         """Analyze paragraphs with comprehensive safety checks"""
@@ -322,7 +352,7 @@ class PDFOrchestrator:
             print(f"   📊 Resource check: {memory_usage:.1f}MB RAM, {processing_time:.1f}s elapsed")
     
     def _prepare_output_data(self, pdf_path: str, analysis_results: List[Dict], 
-                           analytics_data: Dict, model_usage: Dict) -> Dict[str, Any]:
+                           analytics_data: Dict, model_usage: Dict, processing_mode: str) -> Dict[str, Any]:
         """Prepare the final output data structure"""
         return {
             "file_name": os.path.basename(pdf_path),
@@ -339,6 +369,7 @@ class PDFOrchestrator:
             "analysis": analysis_results,
             "analytics": analytics_data,
             "process_log": self.process_log,
+            "processing_mode": processing_mode,
             "validation_info": {
                 "sampling_applied": len(analysis_results) < self.config.MAX_PARAGRAPHS,
                 "resource_limits": {

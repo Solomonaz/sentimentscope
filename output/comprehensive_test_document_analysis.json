@@ -1,0 +1,485 @@
+{
+  "file_name": "comprehensive_test_document.pdf",
+  "processed_at": "2025-10-20T01:44:33.328569",
+  "document_stats": {
+    "total_pages": 4,
+    "total_sections": 15,
+    "dominant_emotion": "Optimistic",
+    "average_confidence": 0.9114999999999999,
+    "model_usage": {
+      "gemini": 14,
+      "keyword_fallback": 1
+    },
+    "processing_time_seconds": 1177.9686408042908,
+    "memory_usage_mb": 1913.34375
+  },
+  "analysis": [
+    {
+      "page": 1,
+      "block_id": 1,
+      "text": "Strategic Business Review & Risk Assessment\nQ1 2024 Performance Analysis\nWe are absolutely thrilled to announce outstanding performance this quarter, with unprecedented\ngrowth across all key metrics. Our strategic initiatives have yielded exceptional results, and we are\nincredibly excited about the tremendous opportunities that lie ahead. The market response has\nbeen overwhelmingly positive, and we must capitalize on this momentum immediately.",
+      "text_snippet": "Strategic Business Review & Risk Assessment\nQ1 2024 Performance Analysis\nWe are absolutely thrilled to announce outstanding performance this quarter, with unprecedented\ngrowth across all key metrics. ...",
+      "emotion": "Optimistic",
+      "intent": "Persuasive",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 2,
+      "block_id": 2,
+      "text": "Executive Summary\nThis quarter represents a pivotal moment for our organization. We must urgently address several\ncritical challenges while aggressively pursuing new opportunities. The board should immediately\napprove the proposed strategic initiatives without delay. We strongly recommend increasing our\ninvestment in digital transformation by 40% to maintain competitive advantage. The data\nunequivocally demonstrates that companies failing to adapt to market changes face existential\nthreats. We cannot afford to be complacent. Our analysis reveals that immediate action is\nabsolutely essential for long-term survival and growth.",
+      "text_snippet": "Executive Summary\nThis quarter represents a pivotal moment for our organization. We must urgently address several\ncritical challenges while aggressively pursuing new opportunities. The board should im...",
+      "emotion": "Fearful",
+      "intent": "Persuasive",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 2,
+      "block_id": 3,
+      "text": "Critical Risk Assessment\nWe are deeply concerned about the escalating cybersecurity threats that have emerged this\nquarter. There is a very real and immediate danger of significant data breaches that could\ncompromise customer information and damage our reputation irreparably. The potential financial\nimpact could exceed $50 million if these vulnerabilities are not addressed immediately.",
+      "text_snippet": "Critical Risk Assessment\nWe are deeply concerned about the escalating cybersecurity threats that have emerged this\nquarter. There is a very real and immediate danger of significant data breaches that ...",
+      "emotion": "Fearful",
+      "intent": "Persuasive",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 2,
+      "block_id": 4,
+      "text": "Furthermore, we are extremely worried about the supply chain disruptions affecting our primary\nmanufacturing partners. The geopolitical situation has created unprecedented uncertainty, and we\nmust develop contingency plans immediately. The risk of production delays is substantial and could\nseverely impact our Q2 delivery commitments.",
+      "text_snippet": "Furthermore, we are extremely worried about the supply chain disruptions affecting our primary\nmanufacturing partners. The geopolitical situation has created unprecedented uncertainty, and we\nmust dev...",
+      "emotion": "Fearful",
+      "intent": "Persuasive",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 2,
+      "block_id": 5,
+      "text": "Operational Performance Issues\nThe recent system failure was completely unacceptable and reflects serious negligence in our IT\ninfrastructure management. This catastrophic failure caused massive disruption to our operations\nand resulted in significant financial losses. We cannot tolerate such incompetence in critical\nsystems. The customer service metrics are absolutely appalling this quarter. The 25% decline in\nsatisfaction scores is completely unacceptable and demonstrates a fundamental failure in our\nservice delivery model. Immediate disciplinary action must be taken against responsible managers.",
+      "text_snippet": "Operational Performance Issues\nThe recent system failure was completely unacceptable and reflects serious negligence in our IT\ninfrastructure management. This catastrophic failure caused massive disru...",
+      "emotion": "Angry",
+      "intent": "Persuasive",
+      "confidence": 0.98,
+      "model_used": "gemini"
+    },
+    {
+      "page": 2,
+      "block_id": 6,
+      "text": "This situation is outrageous and requires immediate rectification.",
+      "text_snippet": "This situation is outrageous and requires immediate rectification.",
+      "emotion": "Angry",
+      "intent": "Persuasive",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 3,
+      "block_id": 7,
+      "text": "Financial Performance Analysis\nAccording to the financial data, revenue reached $125.4 million this quarter, representing an 8.7%\nincrease over the previous quarter. Operating expenses totaled $89.2 million, resulting in a net\nprofit margin of 15.2%. The data indicates consistent performance across most business units.",
+      "text_snippet": "Financial Performance Analysis\nAccording to the financial data, revenue reached $125.4 million this quarter, representing an 8.7%\nincrease over the previous quarter. Operating expenses totaled $89.2 m...",
+      "emotion": "Optimistic",
+      "intent": "Informative",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 3,
+      "block_id": 8,
+      "text": "Research findings show that market share has remained stable at 22.4%. Customer acquisition\ncosts have increased by 3.2% while customer lifetime value has decreased by 1.8%. These metrics\nsuggest we need to optimize our marketing efficiency.",
+      "text_snippet": "Research findings show that market share has remained stable at 22.4%. Customer acquisition\ncosts have increased by 3.2% while customer lifetime value has decreased by 1.8%. These metrics\nsuggest we n...",
+      "emotion": "Cautious",
+      "intent": "Persuasive",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 3,
+      "block_id": 9,
+      "text": "Strategic Growth Opportunities\nWe are absolutely ecstatic about the breakthrough technology developed by our R&D; team! This\nrevolutionary innovation has the potential to completely transform our industry and establish us as\nmarket leaders for the next decade. The opportunity is massive and we must move aggressively to\ncapitalize on it. The market analysis reveals an amazing opportunity in the Asian markets that could\ntriple our revenue within 18 months. This is an extraordinary chance for exponential growth. We\nshould immediately allocate $25 million to accelerate our expansion plans. The timing is perfect and\nthe potential returns are absolutely incredible!",
+      "text_snippet": "Strategic Growth Opportunities\nWe are absolutely ecstatic about the breakthrough technology developed by our R&D; team! This\nrevolutionary innovation has the potential to completely transform our indu...",
+      "emotion": "Optimistic",
+      "intent": "Persuasive",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 3,
+      "block_id": 10,
+      "text": "Employee Satisfaction & Culture\nUnfortunately, we have observed a deeply concerning decline in employee morale this quarter. The\nrecent survey results are truly disappointing, with a 30% increase in staff turnover and a significant\ndrop in engagement scores. This troubling trend reflects underlying issues in our workplace culture\nthat we must address immediately. It is with great regret that we report the departure of several key\nteam members who expressed dissatisfaction with our management approach. We have failed to\nprovide the supportive environment our employees deserve, and this failure has resulted in the loss\nof valuable talent. We must do better.",
+      "text_snippet": "Employee Satisfaction & Culture\nUnfortunately, we have observed a deeply concerning decline in employee morale this quarter. The\nrecent survey results are truly disappointing, with a 30% increase in s...",
+      "emotion": "Sad",
+      "intent": "Persuasive",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 4,
+      "block_id": 11,
+      "text": "Regulatory Compliance Update\nWe must carefully monitor the evolving regulatory landscape, as several new compliance\nrequirements could significantly impact our operations. The potential for regulatory penalties is\nsubstantial if we fail to adapt our processes accordingly. We should consider engaging external\nlegal counsel to ensure we are fully compliant. There is a potential risk of litigation related to recent\nproduct performance issues. While we believe our position is defensible, we must prepare for the\npossibility of legal challenges. The financial implications could be material, and we need to evaluate\nour insurance coverage carefully.",
+      "text_snippet": "Regulatory Compliance Update\nWe must carefully monitor the evolving regulatory landscape, as several new compliance\nrequirements could significantly impact our operations. The potential for regulatory...",
+      "emotion": "Cautious",
+      "intent": "Persuasive",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 4,
+      "block_id": 12,
+      "text": "Market Position & Competitive Analysis\nWhile we celebrate our strong market position, we must acknowledge the aggressive moves by our\nmain competitors. There is a real threat of market share erosion if we don't respond effectively.",
+      "text_snippet": "Market Position & Competitive Analysis\nWhile we celebrate our strong market position, we must acknowledge the aggressive moves by our\nmain competitors. There is a real threat of market share erosion i...",
+      "emotion": "Optimistic",
+      "intent": "Neutral",
+      "confidence": 0.3125,
+      "model_used": "keyword_fallback"
+    },
+    {
+      "page": 4,
+      "block_id": 13,
+      "text": "However, we are optimistic about our new product pipeline which should help maintain our\nleadership position. The economic uncertainty creates both challenges and opportunities. We need\nto be cautious in our investments but should also consider strategic acquisitions while valuations\nare favorable. This balanced approach will serve us well in the current volatile environment.",
+      "text_snippet": "However, we are optimistic about our new product pipeline which should help maintain our\nleadership position. The economic uncertainty creates both challenges and opportunities. We need\nto be cautious...",
+      "emotion": "Optimistic",
+      "intent": "Persuasive",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 4,
+      "block_id": 14,
+      "text": "Conclusion & Strategic Imperatives\nIn conclusion, while we face significant challenges, the overall outlook remains strongly positive.",
+      "text_snippet": "Conclusion & Strategic Imperatives\nIn conclusion, while we face significant challenges, the overall outlook remains strongly positive.",
+      "emotion": "Optimistic",
+      "intent": "Persuasive",
+      "confidence": 0.95,
+      "model_used": "gemini"
+    },
+    {
+      "page": 4,
+      "block_id": 15,
+      "text": "We must act decisively and immediately on the recommendations outlined in this report. Delaying\naction would be catastrophic for our competitive position and long-term viability. We urgently need\nto: 1) Address the cybersecurity vulnerabilities immediately, 2) Invest aggressively in our digital\ntransformation, 3) Restore employee morale through meaningful cultural changes, and 4) Capitalize\non the extraordinary market opportunities we've identified. The board must approve these initiatives\nwithout hesitation. The future of our organization depends on taking bold, immediate action. We\ncannot afford to wait!",
+      "text_snippet": "We must act decisively and immediately on the recommendations outlined in this report. Delaying\naction would be catastrophic for our competitive position and long-term viability. We urgently need\nto: ...",
+      "emotion": "Excited",
+      "intent": "Persuasive",
+      "confidence": 0.98,
+      "model_used": "gemini"
+    }
+  ],
+  "analytics": {
+    "emotion_distribution": {
+      "Optimistic": 0.4,
+      "Fearful": 0.2,
+      "Angry": 0.13333333333333333,
+      "Cautious": 0.13333333333333333,
+      "Sad": 0.06666666666666667,
+      "Excited": 0.06666666666666667
+    },
+    "intent_distribution": {
+      "Persuasive": 0.8666666666666667,
+      "Informative": 0.06666666666666667,
+      "Neutral": 0.06666666666666667
+    },
+    "average_confidence": 0.9114999999999999,
+    "dominant_emotion": "Optimistic",
+    "confidence_stats": {
+      "mean": 0.9114999999999999,
+      "std": 0.16041041113344232,
+      "min": 0.3125,
+      "max": 0.98
+    },
+    "page_analysis": {
+      "1": {
+        "dominant_emotion": "Optimistic",
+        "dominant_intent": "Persuasive",
+        "emotion_distribution": {
+          "Optimistic": 1
+        },
+        "intent_distribution": {
+          "Persuasive": 1
+        },
+        "average_confidence": 0.95
+      },
+      "2": {
+        "dominant_emotion": "Fearful",
+        "dominant_intent": "Persuasive",
+        "emotion_distribution": {
+          "Fearful": 3,
+          "Angry": 2
+        },
+        "intent_distribution": {
+          "Persuasive": 5
+        },
+        "average_confidence": 0.9559999999999998
+      },
+      "3": {
+        "dominant_emotion": "Optimistic",
+        "dominant_intent": "Persuasive",
+        "emotion_distribution": {
+          "Optimistic": 2,
+          "Cautious": 1,
+          "Sad": 1
+        },
+        "intent_distribution": {
+          "Informative": 1,
+          "Persuasive": 3
+        },
+        "average_confidence": 0.95
+      },
+      "4": {
+        "dominant_emotion": "Optimistic",
+        "dominant_intent": "Persuasive",
+        "emotion_distribution": {
+          "Cautious": 1,
+          "Optimistic": 3,
+          "Excited": 1
+        },
+        "intent_distribution": {
+          "Persuasive": 4,
+          "Neutral": 1
+        },
+        "average_confidence": 0.8285
+      }
+    },
+    "timeline_data": {
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "emotions": [
+        "Optimistic",
+        "Fearful",
+        "Fearful",
+        "Fearful",
+        "Angry",
+        "Angry",
+        "Optimistic",
+        "Cautious",
+        "Optimistic",
+        "Sad",
+        "Cautious",
+        "Optimistic",
+        "Optimistic",
+        "Optimistic",
+        "Excited"
+      ],
+      "intents": [
+        "Persuasive",
+        "Persuasive",
+        "Persuasive",
+        "Persuasive",
+        "Persuasive",
+        "Persuasive",
+        "Informative",
+        "Persuasive",
+        "Persuasive",
+        "Persuasive",
+        "Persuasive",
+        "Neutral",
+        "Persuasive",
+        "Persuasive",
+        "Persuasive"
+      ],
+      "confidences": [
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.98,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.3125,
+        0.95,
+        0.95,
+        0.98
+      ]
+    },
+    "keyword_analysis": {
+      "Optimistic": [
+        "strategic",
+        "performance",
+        "analysis",
+        "this",
+        "absolutely"
+      ],
+      "Fearful": [
+        "this",
+        "critical",
+        "about",
+        "executive",
+        "summary"
+      ],
+      "Angry": [
+        "this",
+        "operational",
+        "performance",
+        "issues",
+        "recent"
+      ],
+      "Sad": [
+        "employee",
+        "satisfaction",
+        "culture",
+        "unfortunately,",
+        "have"
+      ],
+      "Neutral": [],
+      "Excited": [
+        "must",
+        "decisively",
+        "immediately",
+        "recommendations",
+        "outlined"
+      ],
+      "Cautious": [
+        "customer",
+        "regulatory",
+        "compliance",
+        "research",
+        "findings"
+      ]
+    },
+    "chart_data": {
+      "emotion_distribution": {
+        "labels": [
+          "Optimistic",
+          "Fearful",
+          "Angry",
+          "Cautious",
+          "Sad",
+          "Excited"
+        ],
+        "values": [
+          6,
+          3,
+          2,
+          2,
+          1,
+          1
+        ]
+      },
+      "intent_distribution": {
+        "labels": [
+          "Persuasive",
+          "Informative",
+          "Neutral"
+        ],
+        "values": [
+          13,
+          1,
+          1
+        ]
+      },
+      "timeline": {
+        "blocks": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "emotions": [
+          "Optimistic",
+          "Fearful",
+          "Fearful",
+          "Fearful",
+          "Angry",
+          "Angry",
+          "Optimistic",
+          "Cautious",
+          "Optimistic",
+          "Sad",
+          "Cautious",
+          "Optimistic",
+          "Optimistic",
+          "Optimistic",
+          "Excited"
+        ],
+        "intents": [
+          "Persuasive",
+          "Persuasive",
+          "Persuasive",
+          "Persuasive",
+          "Persuasive",
+          "Persuasive",
+          "Informative",
+          "Persuasive",
+          "Persuasive",
+          "Persuasive",
+          "Persuasive",
+          "Neutral",
+          "Persuasive",
+          "Persuasive",
+          "Persuasive"
+        ],
+        "confidences": [
+          0.95,
+          0.95,
+          0.95,
+          0.95,
+          0.98,
+          0.95,
+          0.95,
+          0.95,
+          0.95,
+          0.95,
+          0.95,
+          0.3125,
+          0.95,
+          0.95,
+          0.98
+        ]
+      },
+      "confidence_heatmap": {
+        "1": 0.95,
+        "2": 0.9559999999999998,
+        "3": 0.95,
+        "4": 0.8285
+      }
+    }
+  },
+  "process_log": [
+    {
+      "timestamp": "2025-10-20T01:44:15.863009",
+      "event": "keyword_fallback_used",
+      "detail": "Paragraph 12",
+      "memory_mb": 1908.27734375,
+      "processing_time_seconds": 1160.5046002864838
+    }
+  ],
+  "processing_mode": "standard",
+  "validation_info": {
+    "sampling_applied": true,
+    "resource_limits": {
+      "max_pages": 50,
+      "max_memory_mb": 512,
+      "max_processing_minutes": 10
+    }
+  }
+}
