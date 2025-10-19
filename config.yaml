@@ -1,0 +1,44 @@
+# API Configuration
+api_settings:
+  max_retries: 3
+  timeout: 30
+  batch_size: 5
+
+# Analysis Configuration
+analysis:
+  max_text_length: 1000
+  min_confidence: 0.3
+  emotion_categories: ["Optimistic", "Fearful", "Angry", "Sad", "Neutral", "Excited", "Cautious"]
+  intent_categories: ["Persuasive", "Informative", "Neutral"]
+
+# Fallback Keyword Weights
+keyword_weights:
+  emotion:
+    Optimistic: ["growth", "success", "positive", "opportunity", "improve", "better", "strong", "win"]
+    Fearful: ["risk", "concern", "uncertain", "challenge", "threat", "caution", "worry", "volatile"]
+    Angry: ["failure", "problem", "issue", "wrong", "mistake", "blame", "criticize", "disappoint"]
+    Sad: ["loss", "decline", "difficult", "struggle", "setback", "unfortunately", "regret"]
+    Excited: ["innovation", "breakthrough", "amazing", "excellent", "outstanding", "transform"]
+    Cautious: ["monitor", "evaluate", "consider", "potential", "may", "could", "possibly"]
+    Neutral: ["report", "data", "analysis", "information", "update", "current", "status"]
+  
+  intent:
+    Persuasive: ["should", "must", "need to", "recommend", "advise", "suggest", "encourage", "urge"]
+    Informative: ["according to", "data shows", "research indicates", "findings", "analysis", "report"]
+    Neutral: ["the", "is", "are", "was", "were", "and", "or", "but"]
+
+# Chart Settings
+charts:
+  dpi: 150
+  width: 10
+  height: 6
+  colors:
+    optimistic: "#2E8B57"
+    fearful: "#FF6B6B"
+    angry: "#DC143C"
+    sad: "#4682B4"
+    excited: "#FFD700"
+    cautious: "#FFA500"
+    neutral: "#708090"
+    persuasive: "#8A2BE2"
+    informative: "#20B2AA"
